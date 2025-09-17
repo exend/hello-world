@@ -1,0 +1,10 @@
+#ifndef TIMERDELAY_H
+#define TIMERDELAY_H
+
+typedef enum {
+	TIMER_CANCEL,
+	TIMER_PERIODIC,
+	TIMER_RELATIVE
+} EFI_TIMER_DELAY;
+
+#endif // TIMERDELAY_H
