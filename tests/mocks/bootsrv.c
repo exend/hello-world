@@ -1,6 +1,6 @@
 #include "bootsrv.h"
-#include "evttypes.h"
-#include "status.h"
+#include <efi/evttypes.h>
+#include <efi/status.h>
 #include <string.h>
 #include <stdlib.h>
 

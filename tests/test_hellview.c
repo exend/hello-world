@@ -1,8 +1,8 @@
 #include "test_utils.h"
-#include "mocks/types.h"
-#include "mocks/status.h"
 #include "mocks/cout.h"
 #include "mocks/mock_hellctrl.h"
+#include <efi/types.h>
+#include <efi/status.h>
 #include <inttypes.h>
 
 struct hellview;

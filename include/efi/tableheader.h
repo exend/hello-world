@@ -4,11 +4,11 @@
 #include <inttypes.h>
 
 typedef struct {
-	uint64_t Signature;
-	uint32_t Revision;
-	uint32_t HeaderSize;
-	uint32_t CRC32;
-	uint32_t Reserved;
+	uint64_t signature;
+	uint32_t revision;
+	uint32_t header_size;
+	uint32_t crc32;
+	uint32_t reserved;
  } EFI_TABLE_HEADER;
 
  #endif // TABLEHEADER_H

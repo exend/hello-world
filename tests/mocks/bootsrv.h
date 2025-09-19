@@ -1,10 +1,11 @@
 #ifndef BOOTSRV_H
 #define BOOTSRV_H
 
-#include "types.h"
-#include "tpl.h"
-#include "timerdelay.h"
-#include "tableheader.h"
+#include <efi/types.h>
+#include <efi/status.h>
+#include <efi/tpl.h>
+#include <efi/timerdelay.h>
+#include <efi/tableheader.h>
 #include <inttypes.h>
 
 struct mock_event;

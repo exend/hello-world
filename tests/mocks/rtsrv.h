@@ -1,9 +1,10 @@
 #ifndef RTSRV_H
 #define RTSRV_H
 
-#include "types.h"
-#include "resettype.h"
-#include "tableheader.h"
+#include <efi/types.h>
+#include <efi/status.h>
+#include <efi/resettype.h>
+#include <efi/tableheader.h>
 
 struct rtsrv_reset_data {
 	EFI_RESET_TYPE reset_type;

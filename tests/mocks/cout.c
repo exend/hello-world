@@ -1,5 +1,5 @@
 #include "cout.h"
-#include "status.h"
+#include <efi/status.h>
 #include <string.h>
 
 static const UINTN mock_cout_cols = 42;

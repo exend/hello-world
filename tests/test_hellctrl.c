@@ -1,12 +1,12 @@
 #include "test_utils.h"
-#include "mocks/types.h"
-#include "mocks/tpl.h"
-#include "mocks/evttypes.h"
-#include "mocks/timerdelay.h"
-#include "mocks/status.h"
 #include "mocks/rtsrv.h"
 #include "mocks/bootsrv.h"
 #include "mocks/mock_hellview.h"
+#include <efi/types.h>
+#include <efi/tpl.h>
+#include <efi/evttypes.h>
+#include <efi/timerdelay.h>
+#include <efi/status.h>
 
 struct hellctrl;
 

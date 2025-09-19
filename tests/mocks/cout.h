@@ -2,7 +2,8 @@
 #define COUT_H
 
 #include <wchar.h>
-#include "types.h"
+#include <efi/types.h>
+#include <efi/status.h>
 
 extern const UINTN mock_cout_cols;
 extern const UINTN mock_cout_rows;

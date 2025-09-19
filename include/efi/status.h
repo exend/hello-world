@@ -1,8 +1,8 @@
 #ifndef STATUS_H
 #define STATUS_H
 
-#include "types.h"
+typedef UINTN EFI_STATUS;
 
-static const UINTN EFI_SUCCESS = 0;
+#define EFI_SUCCESS 0
 
 #endif // STATUS_H

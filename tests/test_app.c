@@ -1,7 +1,7 @@
 #include "test_utils.h"
-#include "mocks/evttypes.h"
 #include "mocks/mock_hellview.h"
 #include "mocks/bootsrv.h"
+#include <efi/evttypes.h>
 
 struct app {
 	struct mock_hellview *view_ptr;

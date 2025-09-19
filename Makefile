@@ -1,25 +1,14 @@
 ifeq ($(OS),Windows_NT)
-	EXT :=
-	MKDIR := md
+	MKDIR = if not exist "$(1)" md "$(1)"
 	RMDIR := rmdir /s /q
 else
-	ifeq ($(shell uname -s),Linux)
-		EXT := .exe
-	else # UNIX
-		EXT :=
-	endif
-	MKDIR := mkdir -p
+	MKDIR = mkdir -p "$(1)"
 	RMDIR := rm -rf
 endif
 
-CC := clang
-CFLAGS := -target x86_64-w64-mingw32
-
-LD := lld-link
-LDFLAGS := /entry:_efi_entry /subsystem:efi_application
-
 TARGET := BOOTx64
 
+INCDIR := include
 SRCDIR := src
 BUILDDIR := build
 TESTDIR := tests
@@ -30,35 +19,37 @@ SRCS := $(wildcard $(SRCDIR)/*.s)
 OBJS := $(patsubst %.s,$(OBJDIR)/%.o,$(notdir $(SRCS)))
 TESTHEADERS := $(wildcard $(TESTDIR)/*.h) $(foreach subdir,$(TESTDIR)/*,$(wildcard $(subdir)/*.h))
 TESTSRCS := $(wildcard $(TESTDIR)/*.c) $(foreach subdir,$(TESTDIR)/*,$(wildcard $(subdir)/*.c))
-TESTOBJS := $(patsubst %.c,$(OBJDIR)/%.o,$(notdir $(TESTSRCS)))
+TESTOBJS := $(patsubst $(TESTDIR)/%.c,$(OBJDIR)/%.o,$(TESTSRCS))
+
+CC := clang
+CL := clang-cl
+MINGWFLAGS := -target x86_64-w64-mingw32
+CFLAGS := /I$(INCDIR) /D_CRT_SECURE_NO_WARNINGS
+
+LD := lld-link
+LDFLAGS := /entry:_efi_entry /subsystem:efi_application
 
 .PHONY: all clean test
 
 all: $(BINDIR)/$(TARGET).efi
 
-clean:
-	$(RMDIR) "$(BUILDDIR)"
+$(BINDIR)/$(TARGET).efi: $(OBJS)
+	@$(call MKDIR,$(dir $@))
+	$(LD) $(LDFLAGS) $(OBJS) /out:$@
 
-$(BINDIR)/$(TARGET).efi: $(OBJS) | $(BINDIR)
-	$(LD)$(EXT) $(LDFLAGS) $(OBJS) /out:$@
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.s | $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJDIR):
-	$(MKDIR) "$(OBJDIR)"
-	@echo $(filter %.c,$(TESTSRCS))
-
-$(BINDIR):
-	$(MKDIR) "$(BINDIR)"
+$(OBJDIR)/%.o: $(SRCDIR)/%.s
+	@$(call MKDIR,$(dir $@))
+	$(CC) $(MINGWFLAGS) -c $< -o $@
 
 test: $(BINDIR)/test.exe
 
-$(BINDIR)/test.exe: $(OBJS) $(TESTOBJS) | $(BINDIR)
-	$(LD)$(EXT) $(OBJS) $(TESTOBJS) /out:$@
+$(BINDIR)/test.exe: $(OBJS) $(TESTOBJS)
+	@$(call MKDIR,$(dir $@))
+	$(LD) $(OBJS) $(TESTOBJS) /out:$@
 
-$(OBJDIR)/%.o: $(TESTDIR)/%.c $(TESTHEADERS) | $(OBJDIR)
-	clang-cl /D_CRT_SECURE_NO_WARNINGS -c $< -o $@
+$(OBJDIR)/%.o: $(TESTDIR)/%.c $(TESTHEADERS)
+	@$(call MKDIR,$(dir $@))
+	$(CL) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR)/%.o: $(TESTDIR)/*/%.c $(TESTHEADERS) | $(OBJDIR)
-	clang-cl /D_CRT_SECURE_NO_WARNINGS -c $< -o $@
+clean:
+	$(RMDIR) "$(BUILDDIR)"
