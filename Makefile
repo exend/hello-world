@@ -12,6 +12,7 @@ INCDIR := include
 SRCDIR := src
 BUILDDIR := build
 TESTDIR := tests
+HOSTDIR := hosted
 OBJDIR := $(BUILDDIR)/obj
 BINDIR := $(BUILDDIR)/bin
 
@@ -20,6 +21,9 @@ OBJS := $(patsubst %.s,$(OBJDIR)/%.o,$(notdir $(SRCS)))
 TESTHEADERS := $(wildcard $(TESTDIR)/*.h) $(foreach subdir,$(TESTDIR)/*,$(wildcard $(subdir)/*.h))
 TESTSRCS := $(wildcard $(TESTDIR)/*.c) $(foreach subdir,$(TESTDIR)/*,$(wildcard $(subdir)/*.c))
 TESTOBJS := $(patsubst $(TESTDIR)/%.c,$(OBJDIR)/%.o,$(TESTSRCS))
+HOSTHEADERS := $(wildcard $(HOSTDIR)/*.h) $(foreach subdir,$(HOSTDIR)/*,$(wildcard $(subdir)/*.h))
+HOSTSRCS := $(wildcard $(HOSTDIR)/*.c) $(foreach subdir,$(HOSTDIR)/*,$(wildcard $(subdir)/*.c))
+HOSTOBJS := $(patsubst $(HOSTDIR)/%.c,$(OBJDIR)/%.o,$(HOSTSRCS))
 
 CC := clang
 CL := clang-cl
@@ -29,7 +33,7 @@ CFLAGS := /I$(INCDIR) /D_CRT_SECURE_NO_WARNINGS
 LD := lld-link
 LDFLAGS := /entry:_efi_entry /subsystem:efi_application
 
-.PHONY: all clean test
+.PHONY: all hosted test clean
 
 all: $(BINDIR)/$(TARGET).efi
 
@@ -40,6 +44,16 @@ $(BINDIR)/$(TARGET).efi: $(OBJS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.s
 	@$(call MKDIR,$(dir $@))
 	$(CC) $(MINGWFLAGS) -c $< -o $@
+
+hosted: $(BINDIR)/hosted.exe
+
+$(BINDIR)/hosted.exe: $(OBJS) $(HOSTOBJS)
+	@$(call MKDIR,$(dir $@))
+	$(LD) $(OBJS) $(HOSTOBJS) /out:$@
+
+$(OBJDIR)/%.o: $(HOSTDIR)/%.c $(HOSTHEADERS)
+	@$(call MKDIR,$(dir $@))
+	$(CL) $(CFLAGS) -c $< -o $@
 
 test: $(BINDIR)/test.exe
 
